@@ -1,0 +1,52 @@
+{
+  "name": "emoji-to-react-icons",
+  "displayName": "Emoji to React Icons",
+  "description": "Find emoji in your code and replace them with relevant react-icons JSX components.",
+  "version": "0.0.1",
+  "publisher": "local-dev",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:emojiToReactIcons.scanCurrentFile",
+    "onCommand:emojiToReactIcons.replaceCurrentFile",
+    "onCommand:emojiToReactIcons.replaceSelection"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "emojiToReactIcons.scanCurrentFile",
+        "title": "Emoji to React Icons: Scan Current File"
+      },
+      {
+        "command": "emojiToReactIcons.replaceCurrentFile",
+        "title": "Emoji to React Icons: Replace Emoji in Current File"
+      },
+      {
+        "command": "emojiToReactIcons.replaceSelection",
+        "title": "Emoji to React Icons: Replace Emoji in Selection"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Amaan9136/emoji-to-react-icons-vs-code"
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "emoji-regex": "^10.4.0"
+  }
+}
