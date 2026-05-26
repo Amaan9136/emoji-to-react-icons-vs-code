@@ -122,7 +122,96 @@ async function replaceRange(editor: vscode.TextEditor, range: vscode.Range) {
   vscode.window.showInformationMessage(`Replaced ${result.supportedCount} emoji with react-icons JSX.${extra}`);
 }
 
+type WorkspaceMatch = {
+  uri: vscode.Uri;
+  relativePath: string;
+  line: number;
+  col: number;
+  emoji: string;
+  mapping: IconMapping | null;
+};
+
+async function scanWorkspaceFiles(hideEmojis: boolean): Promise<WorkspaceMatch[]> {
+  const files = await vscode.workspace.findFiles(
+    '**/*.{js,jsx,ts,tsx,mjs,cjs}',
+    '**/node_modules/**'
+  );
+  const results: WorkspaceMatch[] = [];
+  for (const uri of files) {
+    const doc = await vscode.workspace.openTextDocument(uri);
+    const text = doc.getText();
+    const matches = getMatches(text);
+    const relativePath = vscode.workspace.asRelativePath(uri);
+    for (const m of matches) {
+      if (hideEmojis && !m.mapping) continue;
+      const pos = doc.positionAt(m.index);
+      results.push({
+        uri,
+        relativePath,
+        line: pos.line + 1,
+        col: pos.character + 1,
+        emoji: m.emoji,
+        mapping: m.mapping,
+      });
+    }
+  }
+  return results;
+}
+
+let workspaceScanChannel: vscode.OutputChannel | undefined;
+let autoScanDisposable: vscode.Disposable | undefined;
+
+function getOrCreateChannel() {
+  if (!workspaceScanChannel) workspaceScanChannel = vscode.window.createOutputChannel('Emoji to React Icons — Workspace');
+  return workspaceScanChannel;
+}
+
+async function runWorkspaceScan(hideEmojis: boolean) {
+  const channel = getOrCreateChannel();
+  channel.clear();
+  channel.appendLine('Scanning workspace...');
+  channel.show(true);
+  const matches = await scanWorkspaceFiles(hideEmojis);
+  channel.clear();
+  if (matches.length === 0) {
+    channel.appendLine(hideEmojis ? 'No supported emoji found in workspace.' : 'No emoji found in workspace.');
+    return;
+  }
+  const byFile = new Map<string, WorkspaceMatch[]>();
+  for (const m of matches) {
+    const existing = byFile.get(m.relativePath) ?? [];
+    existing.push(m);
+    byFile.set(m.relativePath, existing);
+  }
+  let total = 0;
+  for (const [file, items] of byFile.entries()) {
+    channel.appendLine(`\n${file}`);
+    for (const item of items) {
+      const icon = item.mapping ? ` → ${item.mapping.importName}` : ' (unsupported)';
+      const emojiPart = hideEmojis ? '' : ` ${item.emoji}`;
+      channel.appendLine(`  Line ${item.line}, Col ${item.col}:${emojiPart}${icon}`);
+      total++;
+    }
+  }
+  channel.appendLine(`\n─────────────────────────`);
+  channel.appendLine(`Total: ${total} emoji across ${byFile.size} file(s)`);
+}
+
+function startAutoScan(context: vscode.ExtensionContext) {
+  const config = vscode.workspace.getConfiguration('emojiToReactIcons');
+  if (!config.get<boolean>('autoScan', true)) return;
+  const hideEmojis = config.get<boolean>('hideUnsupportedInScan', false);
+  runWorkspaceScan(hideEmojis);
+  autoScanDisposable = vscode.workspace.onDidSaveTextDocument(() => {
+    const cfg = vscode.workspace.getConfiguration('emojiToReactIcons');
+    if (!cfg.get<boolean>('autoScan', true)) return;
+    runWorkspaceScan(cfg.get<boolean>('hideUnsupportedInScan', false));
+  });
+  context.subscriptions.push(autoScanDisposable);
+}
+
 export function activate(context: vscode.ExtensionContext) {
+  startAutoScan(context);
   context.subscriptions.push(
     vscode.commands.registerCommand('emojiToReactIcons.scanCurrentFile', async () => {
       const editor = vscode.window.activeTextEditor;
@@ -157,6 +246,46 @@ export function activate(context: vscode.ExtensionContext) {
         ? new vscode.Range(editor.selection.start, editor.selection.end)
         : new vscode.Range(doc.positionAt(0), doc.positionAt(doc.getText().length));
       await replaceRange(editor, range);
+    }),
+    vscode.commands.registerCommand('emojiToReactIcons.scanWorkspace', async () => {
+      const config = vscode.workspace.getConfiguration('emojiToReactIcons');
+      const hideEmojis = config.get<boolean>('hideUnsupportedInScan', false);
+      await runWorkspaceScan(hideEmojis);
+    }),
+    vscode.commands.registerCommand('emojiToReactIcons.replaceWorkspace', async () => {
+      if (!vscode.workspace.workspaceFolders?.length) {
+        vscode.window.showWarningMessage('No workspace folder open.');
+        return;
+      }
+      const confirm = await vscode.window.showWarningMessage(
+        'Replace all emoji with react-icons JSX across the entire workspace?',
+        { modal: true },
+        'Replace All'
+      );
+      if (confirm !== 'Replace All') return;
+      const files = await vscode.workspace.findFiles('**/*.{js,jsx,ts,tsx,mjs,cjs}', '**/node_modules/**');
+      let totalFiles = 0;
+      let totalReplaced = 0;
+      for (const uri of files) {
+        const doc = await vscode.workspace.openTextDocument(uri);
+        const text = doc.getText();
+        const result = replaceText(text);
+        if (result.supportedCount === 0) continue;
+        const edit = new vscode.WorkspaceEdit();
+        const fullRange = new vscode.Range(doc.positionAt(0), doc.positionAt(text.length));
+        edit.replace(uri, fullRange, result.updated);
+        await vscode.workspace.applyEdit(edit);
+        await doc.save();
+        totalFiles++;
+        totalReplaced += result.supportedCount;
+      }
+      vscode.window.showInformationMessage(
+        totalReplaced === 0
+          ? 'No emoji found across workspace.'
+          : `Replaced ${totalReplaced} emoji in ${totalFiles} file(s) with react-icons JSX.`
+      );
+      const config = vscode.workspace.getConfiguration('emojiToReactIcons');
+      await runWorkspaceScan(config.get<boolean>('hideUnsupportedInScan', false));
     })
   );
 }

@@ -13,7 +13,9 @@
   "activationEvents": [
     "onCommand:emojiToReactIcons.scanCurrentFile",
     "onCommand:emojiToReactIcons.replaceCurrentFile",
-    "onCommand:emojiToReactIcons.replaceSelection"
+    "onCommand:emojiToReactIcons.replaceSelection",
+    "onCommand:emojiToReactIcons.scanWorkspace",
+    "onCommand:emojiToReactIcons.replaceWorkspace"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -29,8 +31,31 @@
       {
         "command": "emojiToReactIcons.replaceSelection",
         "title": "Emoji to React Icons: Replace Emoji in Selection"
+      },
+      {
+        "command": "emojiToReactIcons.scanWorkspace",
+        "title": "Emoji to React Icons: Scan Entire Workspace"
+      },
+      {
+        "command": "emojiToReactIcons.replaceWorkspace",
+        "title": "Emoji to React Icons: Replace Emoji in Entire Workspace"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Emoji to React Icons",
+      "properties": {
+        "emojiToReactIcons.autoScan": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan the workspace for emoji on startup and on save."
+        },
+        "emojiToReactIcons.hideUnsupportedInScan": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hide unsupported (unmapped) emoji from workspace scan results."
+        }
+      }
+    }
   },
   "repository": {
     "type": "git",
