@@ -11,3 +11,12 @@ node_modules/**
 README.md
 repomix-output.xml
 out/**
+.next/**
+.nuxt/**
+.output/**
+.cache/**
+.turbo/**
+build/**
+public/**
+.editorconfig
+CONTRIBUTING.md

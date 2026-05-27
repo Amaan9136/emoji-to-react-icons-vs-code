@@ -1,14 +1,53 @@
 {
   "name": "emoji-to-react-icons",
   "displayName": "Emoji to React Icons",
-  "description": "Find emoji in your code and replace them with relevant react-icons JSX components.",
+  "description": "Instantly replace emoji in JSX/TSX with react-icons components. Scans files, auto-imports, and replaces 150+ emoji — with one command.",
   "version": "0.0.2",
   "publisher": "AmaanMohammadKhalander",
+  "icon": "icon.png",
+  "changelog": "CHANGELOG.md",
   "engines": {
     "vscode": "^1.90.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Formatters",
+    "Linters"
+  ],
+  "keywords": [
+    "emoji",
+    "react-icons",
+    "jsx",
+    "tsx",
+    "react",
+    "icons",
+    "replace emoji",
+    "emoji to icons",
+    "emoji converter",
+    "react components",
+    "font awesome",
+    "fa6",
+    "icon replacement",
+    "emoji scanner",
+    "jsx icons",
+    "nextjs",
+    "typescript"
+  ],
+  "galleryBanner": {
+    "color": "#1e1e2e",
+    "theme": "dark"
+  },
+  "badges": [
+    {
+      "url": "https://img.shields.io/visual-studio-marketplace/v/AmaanMohammadKhalander.emoji-to-react-icons",
+      "href": "https://marketplace.visualstudio.com/items?itemName=AmaanMohammadKhalander.emoji-to-react-icons",
+      "description": "VS Code Marketplace Version"
+    },
+    {
+      "url": "https://img.shields.io/visual-studio-marketplace/d/AmaanMohammadKhalander.emoji-to-react-icons",
+      "href": "https://marketplace.visualstudio.com/items?itemName=AmaanMohammadKhalander.emoji-to-react-icons",
+      "description": "VS Code Marketplace Downloads"
+    }
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -18,27 +57,33 @@
     "commands": [
       {
         "command": "emojiToReactIcons.scanCurrentFile",
-        "title": "Emoji to React Icons: Scan Current File"
+        "title": "Emoji to React Icons: Scan Current File",
+        "icon": "$(search)"
       },
       {
         "command": "emojiToReactIcons.replaceCurrentFile",
-        "title": "Emoji to React Icons: Replace Emoji in Current File"
+        "title": "Emoji to React Icons: Replace Emoji in Current File",
+        "icon": "$(replace)"
       },
       {
         "command": "emojiToReactIcons.replaceSelection",
-        "title": "Emoji to React Icons: Replace Emoji in Selection"
+        "title": "Emoji to React Icons: Replace Emoji in Selection",
+        "icon": "$(replace-all)"
       },
       {
         "command": "emojiToReactIcons.scanWorkspace",
-        "title": "Emoji to React Icons: Scan Entire Workspace"
+        "title": "Emoji to React Icons: Scan Entire Workspace",
+        "icon": "$(folder-opened)"
       },
       {
         "command": "emojiToReactIcons.replaceWorkspace",
-        "title": "Emoji to React Icons: Replace Emoji in Entire Workspace"
+        "title": "Emoji to React Icons: Replace Emoji in Entire Workspace",
+        "icon": "$(run-all)"
       },
       {
         "command": "emojiToReactIcons.showEmojiMap",
-        "title": "Emoji to React Icons: Show Full Emoji to Icon Map"
+        "title": "Emoji to React Icons: Show Full Emoji to Icon Map",
+        "icon": "$(list-unordered)"
       }
     ],
     "configuration": {

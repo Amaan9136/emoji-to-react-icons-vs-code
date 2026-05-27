@@ -213,6 +213,8 @@ const EMOJI_MAP: Record<string, IconMapping> = {
   '🗑': { importFrom: 'fa6', importName: 'FaTrashCan', jsx: '<FaTrashCan />', label: 'trash-can' },
 };
 
+const FRAMEWORK_EXCLUDE = '{**/node_modules/**,.next/**,.nuxt/**,.output/**,.turbo/**,**/dist/**,**/.cache/**,**/build/**,**/__next/**,**/_next/**}';
+
 const diagnosticCollection = vscode.languages.createDiagnosticCollection('emojiToReactIcons');
 
 function getMatches(text: string) {
@@ -306,7 +308,7 @@ type WorkspaceMatch = {
 async function scanWorkspaceFiles(hideUnsupported: boolean): Promise<WorkspaceMatch[]> {
   const files = await vscode.workspace.findFiles(
     '**/*.{js,jsx,ts,tsx,mjs,cjs}',
-    '**/node_modules/**'
+    FRAMEWORK_EXCLUDE
   );
   const results: WorkspaceMatch[] = [];
   for (const uri of files) {
@@ -528,7 +530,7 @@ export function activate(context: vscode.ExtensionContext) {
         'Replace All'
       );
       if (confirm !== 'Replace All') return;
-      const files = await vscode.workspace.findFiles('**/*.{js,jsx,ts,tsx,mjs,cjs}', '**/node_modules/**');
+      const files = await vscode.workspace.findFiles('**/*.{js,jsx,ts,tsx,mjs,cjs}', FRAMEWORK_EXCLUDE);
       let totalFiles = 0;
       let totalReplaced = 0;
       const changedFiles: string[] = [];
