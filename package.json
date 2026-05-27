@@ -2,7 +2,7 @@
   "name": "emoji-to-react-icons",
   "displayName": "Emoji to React Icons",
   "description": "Find emoji in your code and replace them with relevant react-icons JSX components.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "AmaanMohammadKhalander",
   "engines": {
     "vscode": "^1.90.0"
