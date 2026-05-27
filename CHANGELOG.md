@@ -6,6 +6,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ***
 
+## [0.0.3] — 2026
+
+### Added
+- Extension marketplace assets and branding improvements for better discoverability and presentation.
+- New extension icon for improved visual identity across the VS Code Marketplace and editor.
+- Expanded README with clearer setup instructions, feature explanations, command usage examples, and configuration guidance.
+- Additional usage notes and examples to help first-time users understand emoji replacement workflows faster.
+
+### Changed
+- Enhanced workspace scanning performance and reliability for large projects.
+- Improved emoji replacement configuration handling for a more user-friendly setup experience.
+- Refined extension descriptions, keywords, and metadata for improved marketplace SEO.
+- Reworked documentation structure to make commands, settings, and workflows easier to navigate.
+- General quality-of-life improvements and internal cleanup.
+
+***
+
 ## [0.0.2] — 2026
 
 ### Added
