@@ -2,7 +2,7 @@
   "name": "emoji-to-react-icons",
   "displayName": "Emoji to React Icons",
   "description": "Instantly replace emoji in JSX/TSX with react-icons components. Scans files, auto-imports, and replaces 150+ emoji — with one command.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "AmaanMohammadKhalander",
   "icon": "icon.png",
   "changelog": "CHANGELOG.md",
@@ -84,6 +84,11 @@
         "command": "emojiToReactIcons.showEmojiMap",
         "title": "Emoji to React Icons: Show Full Emoji to Icon Map",
         "icon": "$(list-unordered)"
+      },
+      {
+        "command": "emojiToReactIcons.addIgnoreEntry",
+        "title": "Emoji to React Icons: Add to .emoji-ignore",
+        "icon": "$(exclude)"
       }
     ],
     "configuration": {

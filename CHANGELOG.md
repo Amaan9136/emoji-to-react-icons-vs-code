@@ -6,6 +6,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ***
 
+## [0.0.4] — 2026
+
+### Added
+- `.emoji-ignore` file support — place in `.vscode/` to ignore specific files or lines from emoji detection.
+- Quick Fix code actions in the Problems panel — hover any emoji diagnostic to add an ignore rule for the line or the entire file without editing `.emoji-ignore` manually.
+- `Emoji to React Icons: Add to .emoji-ignore` command for programmatic ignore entry insertion.
+- Extension source split into focused utility modules: `importHelper`, `diagnosticHelper`, `replaceHelper`, `scanHelper` — reducing duplication and improving maintainability.
+
+### Changed
+- Workspace scan and on-save diagnostics now respect `.emoji-ignore` rules and skip ignored files/lines automatically.
+- `EMOJI_MAP` and `IconMapping` type are now exclusively sourced from `src/utils/emojiMap.ts`; the duplicate definition in `extension.ts` has been removed.
+
+***
+
 ## [0.0.3] — 2026
 
 ### Added
