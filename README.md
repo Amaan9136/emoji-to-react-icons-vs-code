@@ -47,6 +47,7 @@ Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and search for **"Emoj
 | 📂 **Scan Entire Workspace** | Scans all JS/TS files and shows emoji locations across your project |
 | 🔄 **Replace Emoji in Entire Workspace** | Bulk-replaces all emoji across your entire workspace |
 | 📋 **Show Full Emoji to Icon Map** | Displays all 150+ supported emoji → icon mappings |
+| 🚫 **Add to .emoji-ignore** | Interactively add an emoji, file, or specific line to `.emoji-ignore` |
 
 ---
 
@@ -54,11 +55,14 @@ Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and search for **"Emoj
 
 - 🗺️ **150+ emoji mappings** — covers UI, actions, status, and more
 - 📦 **Auto-imports** — adds `react-icons` imports automatically, no duplicates
-- 🔍 **Inline diagnostics** — hover over emoji to see the suggested icon
-- ⚙️ **Auto-scan on startup** — workspace is scanned when VS Code opens
-- 💾 **Live diagnostics on save** — diagnostics update every time you save
+- 🔍 **Inline diagnostics** — hover over emoji to see the suggested icon with a direct link to the react-icons search page
+- ⚙️ **Auto-scan on startup** — workspace is scanned when VS Code opens (controlled by `emojiToReactIcons.autoScan`)
+- 💾 **Live diagnostics on save** — workspace is re-scanned and diagnostics refreshed every time a supported file is saved
 - 🧩 **Works with any React setup** — Next.js, Vite, CRA, Remix, and more
 - 🔒 **Safe bulk replace** — confirmation dialog before touching your whole workspace
+- 🚫 **`.emoji-ignore` support** — ignore specific files, lines, or emoji workspace-wide via `.vscode/.emoji-ignore`
+- ⚡ **Quick Fix code actions** — hover any emoji diagnostic to instantly add an ignore rule for that line or file without editing `.emoji-ignore` manually
+- 🏎️ **Smarter workspace scanning** — automatically excludes framework build artifacts (`.next`, `.nuxt`, `.output`, `.turbo`, `dist`, `build`, `.cache`) for faster results
 
 ---
 
@@ -68,6 +72,22 @@ Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and search for **"Emoj
 |---|---|---|
 | `emojiToReactIcons.autoScan` | `true` | Auto-scan workspace on startup and update on save |
 | `emojiToReactIcons.hideUnsupportedInScan` | `false` | Hide unmapped emoji from scan results |
+
+---
+
+## 🚫 Ignoring Emoji, Files, and Lines
+
+Place a `.emoji-ignore` file inside your `.vscode/` folder to suppress emoji detection in specific contexts.
+
+**Supported ignore rule formats:**
+
+| Rule format | What it ignores |
+|---|---|
+| `🔥` (bare emoji) | That emoji across the **entire workspace** — all files, scans, diagnostics, and replacements |
+| `src/components/Hero.tsx` | Every emoji in that entire file |
+| `src/components/Hero.tsx:42` | Emoji on that specific line only |
+
+You can also run the **"Emoji to React Icons: Add to .emoji-ignore"** command from the Command Palette. When invoked without a pre-selected context it opens an interactive Quick Pick to choose between ignoring an emoji globally, an entire file, or a specific line — with guided input steps for each choice.
 
 ---
 
@@ -89,6 +109,7 @@ Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and search for **"Emoj
 - Unsupported emoji are reported in the Output panel but never modified
 - Always review replacements — emoji meaning depends on context
 - Use **Scan Current File** first to preview what will change
+- Use **Show Full Emoji to Icon Map** to browse all 150+ mappings and their icon names at a glance
 
 ---
 
@@ -101,6 +122,8 @@ npm run compile
 
 Press `F5` in VS Code to launch the Extension Development Host.
 
+> If `F5` does not work, ensure `.vscode/launch.json` exists in the repo — see [CONTRIBUTING.md](CONTRIBUTING.md) for the template.
+
 ---
 
 ## 🔗 Links
@@ -108,6 +131,7 @@ Press `F5` in VS Code to launch the Extension Development Host.
 - [GitHub Repository](https://github.com/Amaan9136/emoji-to-react-icons-vs-code)
 - [react-icons](https://react-icons.github.io/react-icons/)
 - [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=AmaanMohammadKhalander.emoji-to-react-icons)
+- [Contributing Guide](CONTRIBUTING.md)
 
 ---
 
