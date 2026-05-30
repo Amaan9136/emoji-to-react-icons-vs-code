@@ -5,7 +5,7 @@ npm run bundle
 vsce package
 
 ## Install the VSIX directly in VS Code
-code --install-extension emoji-to-react-icons-0.0.5.vsix
+code --install-extension emoji-to-react-icons-0.0.6.vsix
 
 ## Publish the Extension (Only after Dev - optional)
 npx vsce publish

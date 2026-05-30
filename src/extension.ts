@@ -6,13 +6,9 @@ import { buildImportLine, ensureImports } from './utils/importHelper';
 import { getOrCreateScanChannel, updateDiagnostics, buildDiagnostic } from './utils/diagnosticHelper';
 import { replaceText, replaceRange } from './utils/replaceHelper';
 import { scanWorkspaceFiles, WorkspaceMatch } from './utils/scanHelper';
-
 const FRAMEWORK_EXCLUDE = '{**/node_modules/**,.next/**,.nuxt/**,.output/**,.turbo/**,**/dist/**,**/.cache/**,**/build/**,**/__next/**,**/_next/**}';
-
 export const diagnosticCollection = vscode.languages.createDiagnosticCollection('emojiToReactIcons');
-
 let hasScannedOnce = false;
-
 async function runWorkspaceScan(hideUnsupported: boolean, silent = false) {
   const channel = getOrCreateScanChannel();
   if (!silent) {
@@ -55,7 +51,6 @@ async function runWorkspaceScan(hideUnsupported: boolean, silent = false) {
   channel.appendLine(`\n─────────────────────────`);
   channel.appendLine(`Total: ${total} emoji across ${byFile.size} file(s)`);
 }
-
 function startAutoScan(context: vscode.ExtensionContext) {
   const config = vscode.workspace.getConfiguration('emojiToReactIcons');
   if (!config.get<boolean>('autoScan', true)) return;
@@ -87,7 +82,6 @@ function startAutoScan(context: vscode.ExtensionContext) {
   });
   context.subscriptions.push(disposable);
 }
-
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(diagnosticCollection);
   startAutoScan(context);
@@ -101,6 +95,8 @@ export function activate(context: vscode.ExtensionContext) {
             if (diag.source !== 'Emoji to React Icons') continue;
             const relativePath = vscode.workspace.asRelativePath(document.uri);
             const lineNumber = diag.range.start.line + 1;
+            const emojiMatch = diag.message.match(/Emoji (\S+)/);
+            const emoji = emojiMatch ? emojiMatch[1] : undefined;
             const ignoreLineAction = new vscode.CodeAction(
               `Ignore this line in .emoji-ignore`,
               vscode.CodeActionKind.QuickFix
@@ -123,6 +119,19 @@ export function activate(context: vscode.ExtensionContext) {
             };
             ignoreFileAction.diagnostics = [diag];
             actions.push(ignoreFileAction);
+            if (emoji) {
+              const ignoreEmojiAction = new vscode.CodeAction(
+                `Ignore ${emoji} across entire workspace in .emoji-ignore`,
+                vscode.CodeActionKind.QuickFix
+              );
+              ignoreEmojiAction.command = {
+                command: 'emojiToReactIcons.addIgnoreEntry',
+                title: 'Ignore emoji workspace-wide',
+                arguments: [emoji],
+              };
+              ignoreEmojiAction.diagnostics = [diag];
+              actions.push(ignoreEmojiAction);
+            }
           }
           return actions;
         },
@@ -273,7 +282,6 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 }
-
 export function deactivate() {
   getOrCreateScanChannel().dispose();
   diagnosticCollection.dispose();

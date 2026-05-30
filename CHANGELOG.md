@@ -6,6 +6,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ***
 
+## [0.0.6] — 2026
+
+### Added
+- Quick Fix code actions in the Problems panel now include a third option — **Ignore [emoji] across entire workspace** — in addition to the existing ignore-line and ignore-file actions, writing the bare emoji to `.emoji-ignore` for workspace-wide suppression.
+
+***
+
 ## [0.0.5] — 2026
 
 ### Added
