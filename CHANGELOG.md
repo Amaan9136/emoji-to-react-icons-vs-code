@@ -6,6 +6,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ***
 
+## [0.0.5] — 2026
+
+### Added
+- `.emoji-ignore` now supports workspace-wide emoji ignoring — add a bare emoji (e.g. `🥺`) on its own line and that emoji will be fully ignored across the entire workspace, in all files, scan results, diagnostics, and replacements.
+- `Emoji to React Icons: Add to .emoji-ignore` command now opens an interactive Quick Pick when run from the Command Palette with no pre-selected context, prompting the user to choose between ignoring an emoji from the workspace, an entire file, or a specific line in a file — with follow-up input box steps for each choice. Falls back to empty string if input is dismissed.
+
+### Fixed
+- `Emoji to React Icons: Add to .emoji-ignore` command no longer shows "Added to .emoji-ignore: undefined" when invoked without a pre-supplied entry argument.
+
+***
+
 ## [0.0.4] — 2026
 
 ### Added

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import emojiRegex from 'emoji-regex';
 import { EMOJI_MAP, IconMapping } from './emojiMap';
+import { loadIgnoreRules, isIgnored } from './ignoreHelper';
 
 export type WorkspaceMatch = {
   uri: vscode.Uri;
@@ -15,6 +16,7 @@ export async function scanWorkspaceFiles(hideUnsupported: boolean, frameworkExcl
   const files = await vscode.workspace.findFiles('**/*.{js,jsx,ts,tsx,mjs,cjs}', frameworkExclude);
   const results: WorkspaceMatch[] = [];
   const regex = emojiRegex();
+  const ignoreRules = loadIgnoreRules();
   for (const uri of files) {
     let doc: vscode.TextDocument;
     try {
@@ -30,7 +32,9 @@ export async function scanWorkspaceFiles(hideUnsupported: boolean, frameworkExcl
       const mapping: IconMapping | null = EMOJI_MAP[emoji] ?? null;
       if (hideUnsupported && !mapping) continue;
       const pos = doc.positionAt(match.index ?? -1);
-      results.push({ uri, relativePath, line: pos.line + 1, col: pos.character + 1, emoji, mapping });
+      const line = pos.line + 1;
+      if (isIgnored(ignoreRules, relativePath, line, emoji)) continue;
+      results.push({ uri, relativePath, line, col: pos.character + 1, emoji, mapping });
     }
   }
   return results;

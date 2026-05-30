@@ -30,16 +30,14 @@ async function runWorkspaceScan(hideUnsupported: boolean, silent = false) {
     vscode.window.showErrorMessage('Emoji scan failed. Check the Output panel for details.');
     return;
   }
-  const ignoreRules = loadIgnoreRules();
-  const filtered = matches.filter((m) => !isIgnored(ignoreRules, m.relativePath, m.line));
-  updateDiagnostics(filtered, diagnosticCollection);
+  updateDiagnostics(matches, diagnosticCollection);
   channel.clear();
-  if (filtered.length === 0) {
+  if (matches.length === 0) {
     channel.appendLine(hideUnsupported ? 'No supported emoji found in workspace.' : 'No emoji found in workspace.');
     return;
   }
   const byFile = new Map<string, WorkspaceMatch[]>();
-  for (const m of filtered) {
+  for (const m of matches) {
     const existing = byFile.get(m.relativePath) ?? [];
     existing.push(m);
     byFile.set(m.relativePath, existing);
@@ -81,7 +79,7 @@ function startAutoScan(context: vscode.ExtensionContext) {
       if (hideUnsupported && !mapping) continue;
       const pos = doc.positionAt(index);
       const lineNumber = pos.line + 1;
-      if (isIgnored(ignoreRules, relativePath, lineNumber)) continue;
+      if (isIgnored(ignoreRules, relativePath, lineNumber, emoji)) continue;
       const range = new vscode.Range(pos, new vscode.Position(pos.line, pos.character + [...emoji].length));
       diagnostics.push(buildDiagnostic(range, emoji, mapping));
     }
@@ -131,7 +129,7 @@ export function activate(context: vscode.ExtensionContext) {
       },
       { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] }
     ),
-    vscode.commands.registerCommand('emojiToReactIcons.addIgnoreEntry', async (entry: string) => {
+    vscode.commands.registerCommand('emojiToReactIcons.addIgnoreEntry', async (entry?: string) => {
       await addIgnoreEntry(entry);
       const config = vscode.workspace.getConfiguration('emojiToReactIcons');
       await runWorkspaceScan(config.get<boolean>('hideUnsupportedInScan', false), true);
@@ -218,11 +216,12 @@ export function activate(context: vscode.ExtensionContext) {
         try {
           doc = await vscode.workspace.openTextDocument(uri);
         } catch (err) {
-          console.error(`[EmojiToReactIcons] Could not open file for replacement: ${uri.fsPath}`, err);
+          console.error(`[EmojiToReactIcons] Could not open file for replacement: ${uri.fsPath}`);
           continue;
         }
         const text = doc.getText();
-        const result = replaceText(text);
+        const relPath = vscode.workspace.asRelativePath(uri);
+        const result = replaceText(text, relPath, 0);
         if (result.supportedCount === 0) continue;
         const edit = new vscode.WorkspaceEdit();
         edit.replace(uri, new vscode.Range(doc.positionAt(0), doc.positionAt(text.length)), result.updated);
